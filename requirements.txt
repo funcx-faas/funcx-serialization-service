@@ -1,12 +1,3 @@
-redis
 flask
-psycopg2-binary
-globus_sdk
-zmq
-globus_nexus_client
-flask_wtf
 requests
-flask_socketio
-eventlet
 funcx>=0.0.2a0
-#-e git://github.com/funcx-faas/funcX@dev#egg=funcx

@@ -1,10 +1,8 @@
-from flask import Flask, current_app as app, jsonify, request, abort, g
+
 import argparse
-import json
-import sys
-import logging
-import redis
+
 from funcx.serialize import FuncXSerializer
+from flask import Flask, current_app as app, jsonify, request, abort, g
 
 app = Flask(__name__)
 

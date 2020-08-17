@@ -1,14 +1,19 @@
-FROM funcx-web-base
-WORKDIR /opt/funcx-web-service
-ENV FLASK_APP ./application.py
-ENV FLASK_DEBUG 1
-ENV FLASK_RUN_HOST 0.0.0.0
+FROM python:3.7-alpine
 
-COPY ./requirements.txt ./requirements.txt
-RUN pip install -r requirements.txt
+RUN apk update && \
+    apk add --no-cache gcc musl-dev linux-headers libffi-dev libressl-dev make g++
 
-# use iptables to have flask receive via 80 and 8080
-# this allows us to easily receive traffic intended for funcx.org
-RUN apk add iptables
-EXPOSE 80/tcp
-CMD sh web-entrypoint.sh
+# Create a group and user
+RUN addgroup -S uwsgi && adduser -S uwsgi -G uwsgi
+RUN pip install --disable-pip-version-check uwsgi
+
+COPY . /opt/funcx-serialization-service
+WORKDIR /opt/funcx-serialization-service
+RUN pip install --disable-pip-version-check -q -r ./requirements.txt
+ENV PYTHONPATH "${PYTHONPATH}:/opt/funcx-serialization-service"
+
+USER uwsgi
+EXPOSE 55000-56000
+EXPOSE 3031
+CMD sh entrypoint.sh
+
