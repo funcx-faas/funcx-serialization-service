@@ -12,7 +12,7 @@ Similarly, this service will allow users to request a json response for a task.
 This route expects a POST with a json payload to be serialized. If args and kwargs are specified they will be packed accordingly.
 
 
-/tasks/<task_id>/deserialize/
+/deserialize/
 -----------------------------
 
 A route to retrieve a task from the Redis store and deserialize it. This will return a JSON.dumps response of the result.

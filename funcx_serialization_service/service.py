@@ -1,4 +1,3 @@
-
 import argparse
 
 from funcx.serialize import FuncXSerializer
@@ -9,13 +8,13 @@ app = Flask(__name__)
 
 @app.route('/ping', methods=['GET'])
 def ping():
-    """ Minimal liveness response
+    """ Minimal liveness test
     """
     return "pong"
 
 
 def serialize_fx_inputs(*args, **kwargs):
-    """Pack and serialize inputs
+    """Pack and serialize inputs using the funcX serializer.
     """
     fx_serializer = FuncXSerializer()
     ser_args = fx_serializer.serialize(args)
@@ -26,40 +25,39 @@ def serialize_fx_inputs(*args, **kwargs):
 
 @app.route('/serialize', methods=['POST'])
 def serialize():
-    """Return the serialized inputs
+    """Serialized the inputs and return the packed buffer.
     """
-
+    ret_package = None
     inputs = request.json
-    ret_package = {'error': 'Failed to serailize inputs.'}
-    # TODO deal with args and kwargs
     try:
         ret_package = serialize_fx_inputs(inputs)
     except Exception as e:
-        return jsonify(ret_package), 500
+        return jsonify(repr(e)), 500
     return jsonify(ret_package), 200
 
 
 @app.route('/deserialize', methods=['POST'])
 def deserialize():
-    """Return the deserialized result
+    """Deserialize the buffer and return the result. Return the 
+    stringified exception if one is raised.
     """
 
     fx_serializer = FuncXSerializer()
     # Return a failure message if all else fails
-    ret_package = {'error': 'Failed to deserialize result'}
+    ret_package = None
     try:
         inputs = request.json
         res = fx_serializer.deserialize(inputs)
         ret_package = jsonify(res)
     except Exception as e:
         print(e)
-        return jsonify(ret_package), 500
+        return jsonify(repr(e)), 200
     return ret_package, 200
 
 
 def cli():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-p", "--port", default=8080,
+    parser.add_argument("-p", "--port", default=5000,
                         help="Port at which the service will listen on")
     parser.add_argument("-d", "--debug", action='store_true',
                         help="Enables debug logging")

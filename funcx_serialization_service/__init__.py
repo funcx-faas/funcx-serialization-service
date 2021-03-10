@@ -2,7 +2,7 @@
 
 """
 import logging
-from serializer.version import VERSION
+from funcx_serialization_service.version import VERSION
 from logging.handlers import RotatingFileHandler
 
 __author__ = "The funcX team"

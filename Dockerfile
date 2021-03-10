@@ -1,19 +1,20 @@
-FROM python:3.7-alpine
+FROM python:3.7
 
-RUN apk update && \
-    apk add --no-cache gcc musl-dev linux-headers libffi-dev libressl-dev make g++
+RUN addgroup uwsgi && useradd -g uwsgi uwsgi
 
-# Create a group and user
-RUN addgroup -S uwsgi && adduser -S uwsgi -G uwsgi
+WORKDIR /opt/funcx-serialization-service
+
+COPY ./requirements.txt .
+
+RUN pip install -r requirements.txt
 RUN pip install --disable-pip-version-check uwsgi
 
-COPY . /opt/funcx-serialization-service
-WORKDIR /opt/funcx-serialization-service
-RUN pip install --disable-pip-version-check -q -r ./requirements.txt
-ENV PYTHONPATH "${PYTHONPATH}:/opt/funcx-serialization-service"
+COPY uwsgi.ini .
+COPY ./funcx_serialization_service/ ./funcx_serialization_service/
+COPY entrypoint.sh .
 
 USER uwsgi
-EXPOSE 55000-56000
-EXPOSE 3031
+EXPOSE 5000
+
 CMD sh entrypoint.sh
 

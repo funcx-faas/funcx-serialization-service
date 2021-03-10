@@ -6,14 +6,14 @@ from funcx.serialize import FuncXSerializer
 def deserialize(payload):
     """Try to deserialize some input and return the result.
     """
-    res = requests.post('http://localhost:8000/deserialize', json=payload)
+    res = requests.post('http://localhost:5000/deserialize', json=payload)
     print(res.status_code)
     return res.json()
 
 def serialize(payload):
     """Try to serialize some input and return the result.
     """
-    res = requests.post('http://localhost:8000/serialize', json=payload)
+    res = requests.post('http://localhost:5000/serialize', json=payload)
     print(res.status_code)
     return res.json()
 
@@ -29,7 +29,10 @@ if __name__ == "__main__" :
     res = fx_serializer.unpack_buffers(x)
     print(res)
     y = deserialize(res[0])
+
     print(f'Deserialized: {y}')
+
+    assert y[0]['name'] == "bob"
  
     print('now break things')
     z = deserialize(res)
